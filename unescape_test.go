@@ -1,8 +1,8 @@
 package cflogparser
 
 import (
-	"testing"
 	"net/url"
+	"testing"
 )
 
 func TestUserAgents(t *testing.T) {
@@ -24,8 +24,20 @@ func TestUserAgents(t *testing.T) {
 }
 
 func TestInvalid(t *testing.T) {
-	_, err := Unescape("aaaa%XXaaa")
-	if ee, ok := err.(url.EscapeError); !ok || string(ee) != "%XX" {
-		t.Error(err)
+	tests := []struct {
+		in  string
+		err string
+	}{
+		{"aaaa%XXaaa", "%XX"},
+		{"foo%1Qbar", "%1Q"},
+		{"hoge%8Kfuga", "%8K"},
+		{"piyo%A", "%A"},
+		{"baz%", "%"},
+	}
+	for _, test := range tests {
+		_, err := Unescape(test.in)
+		if ee, ok := err.(url.EscapeError); !ok || string(ee) != test.err {
+			t.Errorf("got %q, want %q", err, test.err)
+		}
 	}
 }
