@@ -5,42 +5,27 @@ import (
 	"strings"
 )
 
-func ishex(c byte) bool {
+func unhex(c byte) (byte, error) {
 	switch {
 	case '0' <= c && c <= '9':
-		return true
+		return c - '0', nil
 	case 'a' <= c && c <= 'f':
-		return true
+		return c - 'a' + 10, nil
 	case 'A' <= c && c <= 'F':
-		return true
+		return c - 'A' + 10, nil
 	}
-	return false
-}
-
-func unhex(c byte) byte {
-	switch {
-	case '0' <= c && c <= '9':
-		return c - '0'
-	case 'a' <= c && c <= 'f':
-		return c - 'a' + 10
-	case 'A' <= c && c <= 'F':
-		return c - 'A' + 10
-	}
-	return 0
+	return 0, url.EscapeError("")
 }
 
 func Unescape(s string) (string, error) {
 	var builder strings.Builder
 	builder.Grow(len(s))
-	
+
 	for i := 0; i < len(s); {
 		switch s[i] {
 		case '%':
-			if i+2 >= len(s) || !ishex(s[i+1]) || !ishex(s[i+2]) {
+			if i+2 >= len(s) {
 				s = s[i:]
-				if len(s) > 3 {
-					s = s[:3]
-				}
 				return "", url.EscapeError(s)
 			}
 			// Some characters in CloudFront's log are escaped twice, such as,
@@ -67,7 +52,13 @@ func Unescape(s string) (string, error) {
 					continue
 				}
 			}
-			builder.WriteByte(unhex(s[i+1])<<4 | unhex(s[i+2]))
+			// Decode "%XX"
+			l, e1 := unhex(s[i+1])
+			r, e2 := unhex(s[i+2])
+			if e1 != nil || e2 != nil {
+				return "", url.EscapeError(s[i : i+3])
+			}
+			builder.WriteByte(l<<4 | r)
 			i += 3
 		default:
 			builder.WriteByte(s[i])
