@@ -17,6 +17,14 @@ func unhex(c byte) (byte, error) {
 	return 0, url.EscapeError("")
 }
 
+// Unescape unescapes field value of log. 
+// This is essentially a URL unescaping like QueryUnescape of net/url,
+// but slightly dirrerent. Because, CloudFront escapes some characters 
+// twice, for example, escaping ' ' (space) into "%2520".
+// See CloudFront doc for the detailed specification:
+// https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html
+// Also, please see AWS Discussion Forums for the background:
+// https://forums.aws.amazon.com/thread.jspa?threadID=134017
 func Unescape(s string) (string, error) {
 	var builder strings.Builder
 	builder.Grow(len(s))
@@ -30,10 +38,6 @@ func Unescape(s string) (string, error) {
 			}
 			// Some characters in CloudFront's log are escaped twice, such as,
 			// '"' => %2522, '\' => %255C, and ' ' => %2520.
-			// See CloudFront doc for details:
-			// https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html
-			// Also, please see AWS developer forum for the background:
-			// https://forums.aws.amazon.com/thread.jspa?threadID=134017
 			if i+4 < len(s) && s[i+1] == '2' && s[i+2] == '5' {
 				if s[i+3] == '2' {
 					if s[i+4] == '0' {
@@ -73,6 +77,8 @@ func Unescape(s string) (string, error) {
 	return builder.String(), nil
 }
 
+// MustUnescape works as the same as Unescape, but it panics instead of 
+// returning error when an error occurs.
 func MustUnescape(s string) string {
 	r, err := Unescape(s)
 	if err != nil {
