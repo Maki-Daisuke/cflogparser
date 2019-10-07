@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// WebLog represents one line of CloudDront log.
+// WebLog represents a record of CloudFront's Web distribution log.
 // Naming convention is borrowed from this article:
 // https://docs.aws.amazon.com/ja_jp/athena/latest/ug/cloudfront-logs.html
 type WebLog struct {
