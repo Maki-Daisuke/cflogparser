@@ -61,7 +61,7 @@ API
 See [Godoc](https://godoc.org/github.com/Maki-Daisuke/cflogparser).
 
 
-Ratinale
+Rationale
 --------
 
 CloudFront log format is very simple and looks easy to parse. It is essentially 
