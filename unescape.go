@@ -22,7 +22,7 @@ func unhex(c byte) (byte, error) {
 // but slightly dirrerent. Because, CloudFront escapes some characters 
 // twice, for example, escaping ' ' (space) into "%2520".
 // See CloudFront doc for the detailed specification:
-// https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html
+// https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html
 // Also, please see AWS Discussion Forums for the background:
 // https://forums.aws.amazon.com/thread.jspa?threadID=134017
 func Unescape(s string) (string, error) {
