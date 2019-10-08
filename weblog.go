@@ -42,6 +42,10 @@ type WebLog struct {
 // ParseLineWeb parses a line of log for a web distribution.
 func ParseLineWeb(line string) (l *WebLog, err error) {
 	vals := strings.Split(line, "\t")
+	if len(vals) < 26 {
+		return nil, fmt.Errorf("Insufficient number of fields: %s", line)
+	}
+
 	l = &WebLog{}
 
 	defer func() {

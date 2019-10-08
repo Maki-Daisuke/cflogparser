@@ -30,6 +30,10 @@ type RTMPLog struct {
 // ParseLineRTMP parses a line of log for a RTMP distribution.
 func ParseLineRTMP(line string) (l *RTMPLog, err error) {
 	vals := strings.Split(line, "\t")
+	if len(vals) < 17 {
+		return nil, fmt.Errorf("Insufficient number of fields: %s", line)
+	}
+
 	l = &RTMPLog{}
 
 	defer func() {
