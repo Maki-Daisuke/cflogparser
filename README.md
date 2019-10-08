@@ -55,6 +55,12 @@ Supported Formtats
   - RTMP Distribution Log File Format: Version 1.0
 
 
+API
+---
+
+See [Godoc](https://godoc.org/github.com/Maki-Daisuke/cflogparser).
+
+
 Ratinale
 --------
 
