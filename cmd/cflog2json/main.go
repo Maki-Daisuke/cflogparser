@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"os"
 	"strings"
@@ -12,8 +13,11 @@ import (
 )
 
 func main() {
-	rd := argvreader.New()
+	var optRTMP bool
+	flag.BoolVar(&optRTMP, "rtmp", false, "Parse input as RTMP distribution log")
+	flag.Parse()
 
+	rd := argvreader.NewReader(flag.Args())
 	for {
 		err := forlines.Do(rd, func(line string) error {
 			if strings.HasPrefix(line, "#") {
@@ -21,7 +25,13 @@ func main() {
 				return nil
 			}
 
-			l, err := cflogparser.ParseLineWeb(line)
+			var l interface{}
+			var err error
+			if !optRTMP {
+				l, err = cflogparser.ParseLineWeb(line)
+			} else {
+				l, err = cflogparser.ParseLineRTMP(line)
+			}
 			if err != nil {
 				fmt.Fprintln(os.Stderr, err)
 				return nil
